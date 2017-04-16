@@ -1,0 +1,131 @@
+<nav class="navbar navbar-default">
+ 
+  
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#nav-collapse" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="glyphicon glyphicon-menu-hamburger"></span>
+
+      </button>
+
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    
+<!-- --------- Main Bootstrap Navbar -------------------- -->
+
+{function name=bsnav depth=1}{strip}
+<div class="collapse navbar-collapse" id="nav-collapse">
+ <ul class="nav navbar-nav">
+ {function do_class}
+    {if count($classes) > 0} class='{implode(' ',$classes)}'{/if}
+{/function} 
+
+
+
+  {foreach $data as $node}
+  
+              {$list_class = []}
+            {$href_class = ['']}
+            {$parent_indicator = ''}
+            {$aria_support = ''}
+   
+               {if $node->current || $node->parent}
+                {* this is the current page *}
+                {$list_class[] = 'active'}
+                
+          {if $node->children_exist}
+                {$list_class[] = 'parent'}
+                {$aria_support = ' aria-haspopup=\'true\''}
+    
+            {/if}
+         
+            {/if}    
+            
+    {* build the menu item node *}
+
+
+<!-- --------- Build Dropdown Menu ----------------- -->
+
+     {if $node->children_exist}
+
+   
+ <li class="dropdown {do_class classes=$list_class}">
+          <a href="{$node->url}" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+           aria-expanded="false">{$node->menutext} <span class="caret"></span></a>
+
+
+            {if isset($node->children)}
+            
+            
+{function name=bsdropdown depth=1}{strip}
+
+ <ul class="dropdown-menu">
+ {function do_class}
+    {if count($classes) > 0} class='{implode(' ',$classes)}'{/if}
+    {/function}
+      {foreach $data as $node}
+  
+              {$list_class = []}
+            {$href_class = ['']}
+            {$parent_indicator = ''}
+            {$aria_support = ''}
+   
+               {if $node->current || $node->parent}
+                {* this is the current page *}
+                {$list_class[] = 'active'}
+                
+          {if $node->children_exist}
+                {$list_class[] = 'parent'}
+                {$aria_support = ' aria-haspopup=\'true\''}
+    
+            {/if}
+         
+            {/if} 
+    
+      <li li role="presentation">
+	   <a href='{$node->url}'{if $node->target != ''} target='{$node->target}'{/if}>{$node->menutext}</a>   
+      </li>
+
+ 
+ {/foreach}
+ 
+  </ul>
+  
+{/function} 
+{/strip}
+
+
+  {bsdropdown data=$node->children depth=$depth+1}
+                 
+        {/if}
+
+      </li>   
+      
+ <!-- ---------- Other Items ---------- -->
+      
+    {else if $node->type == 'separator'}
+      <li li role="separator" class="divider"><hr class='divider'/></li>
+    {else}
+    
+      {* regular item *}
+      
+       <li li role="presentation" {do_class classes=$list_class}{$aria_support}>
+                    <a href='{$node->url}'{if $node->target != ''} target='{$node->target}'{/if}>{$node->menutext}</a>
+    
+        
+      </li>
+    {/if}
+
+      {/foreach}
+    
+</ul>
+{/function}
+{/strip}
+
+
+
+{if isset($nodes)}
+{bsnav data=$nodes depth=0}
+{/if}
